@@ -1,10 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json
 {
-	"name": "python-db-copilot",
+	"name": "sqlalchemy-testing",
 	"image": "mcr.microsoft.com/devcontainers/python:3.11",
-	"features": {
-		"ghcr.io/devcontainers/features/node:1": {}
-	},
 	// Configure tool-specific properties.
 	"customizations": {
 		// Configure properties specific to VS Code.
@@ -14,8 +11,7 @@
 				"ms-python.python",
 				"ms-python.vscode-pylance",
 				"charliermarsh.ruff",
-				"mtxr.sqltools",
-				"mtxr.sqltools-driver-sqlite"
+				"qwtel.sqlite-viewer"
 			],
 			// Set *default* container specific settings.json values on container create.
 			"settings": {
@@ -27,19 +23,11 @@
 					"editor.formatOnSave": true
 				},
 				"python.formatting.provider": "black",
-				"sqltools.useNodeRuntime": true,
-				"sqltools.connections": [
-					{
-						"previewLimit": 50,
-						"driver": "SQLite",
-						"name": "database",
-						"database": "my_database.db"
-					}
-				],
 				"files.exclude": {
 					".ruff_cache": true,
 					".pytest_cache": true
-				}
+				},
+				"editor.guides.bracketPairs": true
 			}
 		}
 	},
