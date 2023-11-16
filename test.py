@@ -74,4 +74,4 @@ with Session(engine) as session:
         .first()
     )[0]
 
-    print(f"Total Quantity Purchanged by Customer {customer_id} is {total_quantity}")
+    print(f"Total Quantity Purchanged by Customer {customer_id} is {total_quantity}.")
