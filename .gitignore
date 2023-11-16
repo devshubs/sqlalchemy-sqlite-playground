@@ -3,3 +3,5 @@ __pycache__/
 .env
 node_modules/
 my_database.db
+.venv/
+database.session.sql
