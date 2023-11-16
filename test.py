@@ -1,5 +1,5 @@
 from sqlalchemy import func
-from example import Customer, CreditCard, Order
+from example import Customer, CreditCard, Order, Product
 from example import engine
 from sqlalchemy.orm import Session
 
@@ -64,14 +64,45 @@ with Session(engine) as session:
     #     print(order)
 
     ## Quesion 8: Find the sum of all items purchanged by user 15
-    customer_id = 15
-    total_quantity = (
-        session.query(func.sum(Order.quantity))
-        .join(Order.customer)
-        .filter(
-            Customer.id == customer_id,
-        )
-        .first()
-    )[0]
+    # customer_id = 15
+    # total_quantity = (
+    #     session.query(func.sum(Order.quantity))
+    #     .join(Order.customer)
+    #     .filter(
+    #         Customer.id == customer_id,
+    #     )
+    #     .first()
+    # )[0]
 
-    print(f"Total quantity purchanged by customer {customer_id} is {total_quantity}.")
+    # print(f"Total quantity purchanged by customer {customer_id} is {total_quantity}.")
+
+    ## Quesiton 9: Find all the products purchanged by user 25
+    # customer_id = 25
+    # products = (
+    #     session.query(Product)
+    #     .join(Product.orders)
+    #     .join(Order.customer)
+    #     .filter(Customer.id == customer_id)
+    #     .all()
+    # )
+
+    # for product in products:
+    #     print(product)
+
+    ## Question 10: List the name of all customers purchaing product 7
+    # product_id = 7
+    # output = (
+    #     session.query(Customer, Order.quantity)
+    #     .join(Customer.orders)
+    #     .join(Order.product)
+    #     .filter(
+    #         Product.id == product_id,
+    #     )
+    #     .order_by(Order.quantity.desc())
+    #     .all()
+    # )
+
+    # for customer, quantity in output:
+    #     print(customer.name, quantity)
+
+    ## Question 11: Find the customer with larget aggregate purchage.
