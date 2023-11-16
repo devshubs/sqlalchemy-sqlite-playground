@@ -1,3 +1,4 @@
+from sqlalchemy import func
 from example import Customer, CreditCard, Order
 from example import engine
 from sqlalchemy.orm import Session
@@ -61,3 +62,16 @@ with Session(engine) as session:
 
     # for order in orders:
     #     print(order)
+
+    ## Quesion 8: Find the sum of all items purchanged by user 15
+    customer_id = 15
+    total_quantity = (
+        session.query(func.sum(Order.quantity))
+        .join(Order.customer)
+        .filter(
+            Customer.id == customer_id,
+        )
+        .first()
+    )[0]
+
+    print(f"Total Quantity Purchanged by Customer {customer_id} is {total_quantity}")
