@@ -63,7 +63,7 @@ class Order(Base):
 engine = create_engine("sqlite:///my_database.db", echo=True)
 Base.metadata.create_all(engine)
 
-fake = Faker(["en_US", "en_GB", "en_CA", "es_MX", "de_DE", "fr_FR", "ja_JP"])
+fake = Faker(["en_IN"])
 
 with Session(engine) as session:
     # insert 10 products
