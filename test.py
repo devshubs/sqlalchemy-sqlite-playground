@@ -1,7 +1,7 @@
 from sqlalchemy import func
 from example import Customer, CreditCard, Order, Product
 from example import engine
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 with Session(engine) as session:
     ## Question 1: print all user name with credit card
@@ -21,6 +21,16 @@ with Session(engine) as session:
     #     .first()
     # )
     # print(user.name)
+
+    ## alternate solution
+    # customer = (
+    #     session.query(Customer)
+    #     .options(
+    #         joinedload(Customer.credit_card),
+    #     )
+    #     .filter(CreditCard.number == "2294999131880001")
+    # ).first()
+    # print(customer)
 
     ## Question 4: Print all the orders of user 1
     # orders = (
@@ -106,3 +116,15 @@ with Session(engine) as session:
     #     print(customer.name, quantity)
 
     ## Question 11: Find the customer with larget aggregate purchage.
+    output = (
+        session.query(Customer, func.count(Order.quantity))
+        .join(Customer.orders)
+        .group_by(Customer.id)
+        .order_by(func.count(Order.quantity).desc())
+        .all()
+    )
+
+    for customer, quantity in output:
+        print(customer.name, quantity)
+
+    print(len(output))
