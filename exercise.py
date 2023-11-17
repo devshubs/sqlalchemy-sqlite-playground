@@ -1,6 +1,6 @@
 from sqlalchemy import func
 from example import Customer, CreditCard, Order, Product
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, joinedload, outerjoin
 from sqlalchemy import create_engine
 
 engine = create_engine("sqlite:///my_database.db", echo=True)
@@ -130,3 +130,51 @@ with Session(engine) as session:
     # print(
     #     f"The larget number of items purchanged by {customer.name}(id:{customer.id}) is {quantity}"
     # )
+
+    ## Question: Create a new customer without order
+    # customer = Customer(
+    #     name="Ramnath Kovind",
+    #     email_address="president@gov.in",
+    #     address="safdarganj road, delhi-800001",
+    #     country_code="IN",
+    # )
+    # session.add(customer)
+    # session.commit()
+    # print(customer.id)
+
+    ## Question 12: Find the customers who don't have any orders
+    # customers = (
+    #     session.query(Customer)
+    #     .with_entities(Customer.name)
+    #     .outerjoin(Customer.orders)      #.join(Customer.orders, isouter=True)
+    #     .filter(Order.id == None)
+    #     .all()
+    # )
+
+    # for customer in customers:
+    #     print(customer)
+
+    ## Question 13: Which customer has the most diverse order history, meaning they have ordered the most different products?
+    # customers = (
+    #     session.query(Customer, func.count(Order.product))
+    #     .with_entities(Customer.name, func.count(Order.product))
+    #     .join(Customer.orders)
+    #     .join(Order.product)
+    #     .group_by(Customer.id)
+    #     .order_by(func.count(Order.product).desc())
+    #     .first()
+    # )
+
+    # print(f"{customers[0]} has orderd highest, {customers[1]} kind of product")
+
+    ## Question 14: Which product is the most popular, meaning it has the highest total sales quantity?
+    product, quantity = (
+        session.query(Product, func.sum(Order.quantity))
+        .with_entities(Product.name, func.sum(Order.quantity))
+        .join(Product.orders)
+        .group_by(Product.id)
+        .order_by(func.sum(Order.quantity).desc())
+        .first()
+    )
+
+    print(f"The most popular product is {product}, sold {quantity} items.")
