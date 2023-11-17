@@ -66,68 +66,73 @@ class Order(Base):
         return f"<Order {self.id}(quantity={self.quantity!r})>"
 
 
-# Set up a database connection and create tables
-engine = create_engine("sqlite:///my_database.db", echo=True)
-Base.metadata.create_all(engine)
+if __name__ == "__main__":
+    # Set up a database connection and create tables
+    engine = create_engine("sqlite:///my_database.db", echo=True)
+    Base.metadata.create_all(engine)
 
-fake = Faker(["en_IN"])
+    fake = Faker(["en_IN"])
 
-with Session(engine) as session:
-    # insert 10 products
-    for i in range(10):
-        product = Product(
-            name=f"Product {i}", price=9.99, description="ABC", category="XYZ"
-        )
-        session.add(product)
-    # create 100 customers
-    for i in range(100):
-        customer = Customer(
-            name=fake.name(),
-            email_address=fake.email(),
-            address=fake.address(),
-            country_code=fake.country_code(),
-        )
-        session.add(customer)
-        # create a credit card for each customer
-        credit_card = CreditCard(number=fake.credit_card_number(), customer=customer)
-        session.add(credit_card)
-        # insert random amount of orders of random product IDs using their credit card
-        for _ in range(fake.random_int(min=1, max=5)):
-            order = Order(
-                customer=customer,
-                product_id=fake.random_int(min=1, max=10),
-                quantity=fake.random_int(min=1, max=5),
+    with Session(engine) as session:
+        # insert 10 products
+        for i in range(10):
+            product = Product(
+                name=f"Product {i}", price=9.99, description="ABC", category="XYZ"
             )
-            session.add(order)
-    # commit the session to the database
-    session.commit()
+            session.add(product)
+        # create 100 customers
+        for i in range(100):
+            customer = Customer(
+                name=fake.name(),
+                email_address=fake.email(),
+                address=fake.address(),
+                country_code=fake.country_code(),
+            )
+            session.add(customer)
+            # create a credit card for each customer
+            credit_card = CreditCard(
+                number=fake.credit_card_number(), customer=customer
+            )
+            session.add(credit_card)
+            # insert random amount of orders of random product IDs using their credit card
+            for _ in range(fake.random_int(min=1, max=5)):
+                order = Order(
+                    customer=customer,
+                    product_id=fake.random_int(min=1, max=10),
+                    quantity=fake.random_int(min=1, max=5),
+                )
+                session.add(order)
+        # commit the session to the database
+        session.commit()
 
-    # Query the database
-    # Get all customers
-    query = select(Customer)
-    results = session.execute(query).scalars().all()
-    print(results)
+        # Query the database
+        # Get all customers
+        query = select(Customer)
+        results = session.execute(query).scalars().all()
+        print(results)
 
-    # Get all customers from the US
-    query = select(Customer).where(Customer.country_code == "US")
-    results = session.execute(query).scalars().all()
-    print(results)
+        # Get all customers from the US
+        query = select(Customer).where(Customer.country_code == "US")
+        results = session.execute(query).scalars().all()
+        print(results)
 
-    # Select a list of countries grouped by country code
-    from sqlalchemy import func
+        # Select a list of countries grouped by country code
+        from sqlalchemy import func
 
-    query = select(Customer.country_code, func.count(Customer.country_code)).group_by(
-        Customer.country_code
-    )
-    results = session.execute(query).all()
-    print(results)
+        query = select(
+            Customer.country_code, func.count(Customer.country_code)
+        ).group_by(Customer.country_code)
+        results = session.execute(query).all()
+        print(results)
 
-    # Select customer name with credit card number
-    query = select(Customer.name, CreditCard.number).join(CreditCard)
-    results = session.execute(query).all()
-    print(results)
+        # Select customer name with credit card number
+        query = select(Customer.name, CreditCard.number).join(CreditCard)
+        results = session.execute(query).all()
+        print(results)
 
-    # Select customer name with their number of orders
-    query = select(Customer.id, func.count(Order.id)).join(Order).group_by(Customer.id)
-    results = session.execute(query).all()
-    print(results)
+        # Select customer name with their number of orders
+        query = (
+            select(Customer.id, func.count(Order.id)).join(Order).group_by(Customer.id)
+        )
+        results = session.execute(query).all()
+        print(results)

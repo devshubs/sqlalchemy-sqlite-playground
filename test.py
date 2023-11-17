@@ -1,7 +1,9 @@
 from sqlalchemy import func
 from example import Customer, CreditCard, Order, Product
-from example import engine
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import create_engine
+
+engine = create_engine("sqlite:///my_database.db", echo=True)
 
 with Session(engine) as session:
     ## Question 1: print all user name with credit card
@@ -116,15 +118,15 @@ with Session(engine) as session:
     #     print(customer.name, quantity)
 
     ## Question 11: Find the customer with larget aggregate purchage.
-    output = (
-        session.query(Customer, func.count(Order.quantity))
-        .join(Customer.orders)
-        .group_by(Customer.id)
-        .order_by(func.count(Order.quantity).desc())
-        .all()
-    )
+    # output = (
+    #     session.query(Customer, func.sum(Order.quantity))
+    #     .join(Customer.orders)
+    #     .group_by(Customer.id)
+    #     .order_by(func.sum(Order.quantity).desc())
+    #     .first()
+    # )
 
-    for customer, quantity in output:
-        print(customer.name, quantity)
-
-    print(len(output))
+    # customer, quantity = output
+    # print(
+    #     f"The larget number of items purchanged by {customer.name}(id:{customer.id}) is {quantity}"
+    # )
